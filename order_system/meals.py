@@ -44,6 +44,10 @@ class Breakfast(Menu):
     def validate(self, order_list):
         if order_list.count("1") > 1 and order_list.count("2") > 1:
             raise TooManyItemsException(f"{self.food_type['1']} and {self.food_type['2']}")
+        elif order_list.count("1") > 1:
+            raise TooManyItemsException(f"{self.food_type['1']}")
+        elif order_list.count("2") > 1:
+            raise TooManyItemsException(f"{self.food_type['2']}")
 
 
 class Lunch(Menu):
