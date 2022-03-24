@@ -1,6 +1,6 @@
-from meals import Breakfast, Lunch, Dinner
+from order_system.meals import Breakfast, Lunch, Dinner
 import logging, os
-from custom_exceptions import OrderIncompleteException
+from order_system.custom_exceptions import OrderIncompleteException
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=LOG_LEVEL)
@@ -14,6 +14,7 @@ class OrderSystem:
         }
 
     def get_order(self, menu_type, order):
+        order = order.replace(" ", "")
         order_list = order.split(",")
         logging.debug(f"Received order: {menu_type} List of items: {order_list}")
         logging.info("Validating food")
