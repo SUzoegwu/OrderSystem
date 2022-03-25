@@ -8,9 +8,9 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', datefmt=
 class OrderSystem:
     def __init__(self):
         self.menu_mapping = {
-            "breakfast" : Breakfast(),
-            "lunch" : Lunch(),
-            "dinner" : Dinner()
+            "breakfast" : Breakfast("BREAKFAST"),
+            "lunch" : Lunch("LUNCH"),
+            "dinner" : Dinner("DINNER")
         }
 
     def get_order(self, menu_type, order):
