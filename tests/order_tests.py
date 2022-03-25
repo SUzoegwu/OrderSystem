@@ -33,7 +33,7 @@ def test_lunch_toomany_excep():
 
 def test_dinner():
     assert order.get_order("Dinner", "1,2,3,4") == "Steak, Potatoes, Water, Wine, Cake"
-    assert order.get_order("Dinner", "1,2,4") == "Steak, Potatoes, Water, , Cake"
+    assert order.get_order("Dinner", "1,2,4") == "Steak, Potatoes, Water, Cake"
 
 def test_dinner_order_incomplete():
     with pytest.raises(OrderIncompleteException) as e_info:
@@ -45,5 +45,5 @@ def test_dinner_toomany_excep():
     with pytest.raises(TooManyItemsException) as e_info:
         order.get_order("Dinner", "2,2,1,1,3,3,4")
     message = e_info.value.args[0] if e_info.value.args else None
-    assert message == "Unable to process: Steak and Potatoes cannot be ordered more than once"
+    assert message == "Unable to process: Steak and Potatoes and Wine cannot be ordered more than once"
 

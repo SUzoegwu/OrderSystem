@@ -1,44 +1,14 @@
-import venv
 from order_system.menu import Menu
-from collections import Counter
 from order_system.custom_exceptions import TooManyItemsException, OrderIncompleteException
 
 class Breakfast(Menu):
-    def __init__(self):
-        self.food_type = {
-            "1" : "Eggs",
-            "2" : "Toast",
-            "3" : "Coffee"
-        }
-    
-    def aggregate(self, food_tuple):
-        return self.food_type[food_tuple[0]] if food_tuple[1]<2 else f"{self.food_type[food_tuple[0]]}({food_tuple[1]})"
+    def __init__(self, meal):
+        super(Breakfast, self).__init__(meal)
     
     def get_food(self, order_list):
-        print("Validating Breakfast Order..")
+        print("Validating Breakfast Order...")
         self.validate(order_list)
-        counter_list = Counter(order_list)
-        print(counter_list)
-        food_amount_list = [(item, amount) for item, amount in counter_list.items()]
-
-        main = ""
-        side = ""
-        drink = ""
-        print(food_amount_list)
-
-        for k, v in food_amount_list:
-            if k == "1":
-                main = self.aggregate((k,v))
-            elif k == "2":
-                side = self.aggregate((k,v))
-            elif k == "3":
-                drink = self.aggregate((k,v))
-            elif k == "Water":
-                drink = k
-        
-        order = f"{main}, {side}, {drink}"
-        print(order)
-        return order
+        return self.aggregate(order_list)
 
     
     def validate(self, order_list):
@@ -51,41 +21,13 @@ class Breakfast(Menu):
 
 
 class Lunch(Menu):
-    def __init__(self):
-        self.food_type = {
-            "1" : "Sandwich",
-            "2" : "Chips",
-            "3" : "Soda"
-        }
+    def __init__(self, meal):
+        super(Lunch, self).__init__(meal)
 
-    def aggregate(self, food_tuple):
-        return self.food_type[food_tuple[0]] if food_tuple[1]<2 else f"{self.food_type[food_tuple[0]]}({food_tuple[1]})"
-    
     def get_food(self, order_list):
         print("Validating Lunch Order...")
         self.validate(order_list)
-        counter_list = Counter(order_list)
-
-        print(counter_list)
-        food_amount_list = [(item, amount) for item, amount in counter_list.items()]
-
-        main = ""
-        side = ""
-        drink = ""
-        print(food_amount_list)
-
-        for k, v in food_amount_list:
-            if k == "1":
-                main = self.aggregate((k,v))
-            elif k == "2":
-                side = self.aggregate((k,v))
-            elif k == "3":
-                drink = self.aggregate((k,v))
-            elif k == "Water":
-                drink = k
-
-        order = f"{main}, {side}, {drink}"
-        return order
+        return self.aggregate(order_list)
     
     def validate(self, order_list):
         if order_list.count("1") > 1 and order_list.count("3") > 1:
@@ -97,51 +39,25 @@ class Lunch(Menu):
         return
 
 class Dinner(Menu):
-    def __init__(self):
-        self.food_type = {
-            "1" : "Steak",
-            "2" : "Potatoes",
-            "3" : "Wine",
-            "4" : "Cake"
-        }
-    
-    def aggregate(self, food_tuple):
-        return self.food_type[food_tuple[0]] if food_tuple[1]<2 else f"{self.food_type[food_tuple[0]]}({food_tuple[1]})"
+    def __init__(self, meal):
+        super(Dinner, self).__init__(meal)
 
     def get_food(self, order_list):
-        print("Validating Lunch Order...")
+        print("Validating Dinner Order...")
         self.validate(order_list)
-        counter_list = Counter(order_list)
-
-        print(counter_list)
-        food_amount_list = [(item, amount) for item, amount in counter_list.items()]
-
-        main = ""
-        side = ""
-        drink = "Water, "
-        dessert = ""
-        print(food_amount_list)
-
-        for k, v in food_amount_list:
-            if k == "1":
-                main = self.aggregate((k,v))
-            elif k == "2":
-                side = self.aggregate((k,v))
-            elif k == "3":
-                drink += self.aggregate((k,v))
-            elif k == "4":
-                dessert = self.aggregate((k,v))
-
-        order = f"{main}, {side}, {drink}, {dessert}"
-        return order
+        return self.aggregate(order_list)
 
     def validate(self, order_list):
         if "4" not in order_list:
             raise OrderIncompleteException("Dessert")
-        if order_list.count("1") > 1 and order_list.count("2") > 1:
-            raise TooManyItemsException(f"{self.food_type['1']} and {self.food_type['2']}")
-        elif order_list.count("1") > 1:
-            raise TooManyItemsException(f"{self.food_type['1']}")
-        elif order_list.count("2") > 1:
-            raise TooManyItemsException(f"{self.food_type['2']}")
+        too_many_message = None
+        single_order_list = ["1", "2", "3"]
+        for i in single_order_list:
+            if order_list.count(i) > 1:
+                if too_many_message is None:
+                    too_many_message = f"{self.food_type[i]}"
+                else:
+                    too_many_message += f" and {self.food_type[i]}"
+        if too_many_message is not None:
+            raise TooManyItemsException(too_many_message)
         return
