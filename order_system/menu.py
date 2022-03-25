@@ -1,11 +1,16 @@
 import abc, os, json
 from collections import Counter
 
+from order_system.custom_exceptions import UnknownItemException
+
 class Menu:
     def __init__(self, meal):
-        self.meal = meal
-        self.food_type = json.loads(os.getenv(meal))
-        self.standard_item = json.loads(os.getenv(meal+"_STANDARD"))
+        print("Initializing Menu")
+        self.meal = meal.lower()
+        self.menu = json.loads(os.getenv("MENU"))
+        self.food_type = self.menu[meal]
+        self.complimentary_items = json.loads(os.getenv("COMPLIMENTARY"))
+        self.standard_item = self.complimentary_items[meal]
 
     def aggregate(self, order_list):
         # food_type = json.loads(os.getenv(meal))
@@ -31,10 +36,13 @@ class Menu:
                 drink = aggregator((k,v)) if drink == "" else drink + ", " +  aggregator((k,v))
             elif k == "4" and dessert is not None:
                 dessert = aggregator((k,v)) if dessert == "" else dessert + ", " +  aggregator((k,v))
-            elif k == "Water" and self.meal.lower() != "dinner":
-                drink += k
+            elif k == "Water":
+                if self.meal.lower() != "dinner":
+                    drink += k
+            else:
+                raise UnknownItemException(str(k))
         
-        if self.meal == "DINNER":
+        if self.meal == "dinner":
             order = f"{main}, {side}, {drink}, {dessert}"
         else:
             order = f"{main}, {side}, {drink}"
