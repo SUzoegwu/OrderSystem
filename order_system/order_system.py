@@ -8,9 +8,9 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', datefmt=
 class OrderSystem:
     def __init__(self):
         self.menu_mapping = {
-            "breakfast" : Breakfast("BREAKFAST"),
-            "lunch" : Lunch("LUNCH"),
-            "dinner" : Dinner("DINNER")
+            "breakfast" : Breakfast("breakfast"),
+            "lunch" : Lunch("lunch"),
+            "dinner" : Dinner("dinner")
         }
 
     def get_order(self, menu_type, order):
@@ -30,8 +30,6 @@ class OrderSystem:
 
         logging.info(f"Getting the food for {menu}")
         return menu.get_food(order_list)
-
-
 
     def validate(self, order_list):
         logging.info(f"Validating {order_list}")

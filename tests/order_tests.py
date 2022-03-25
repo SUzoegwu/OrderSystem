@@ -13,7 +13,7 @@ def test_failed_order():
 
 def test_breakfast():
     assert order.get_order("Breakfast", "1,2,3") == "Eggs, Toast, Coffee"
-    assert order.get_order("Breakfast", "1,2,3,3,") == "Eggs, Toast, Coffee(2)"
+    assert order.get_order("Breakfast", "1,2,3,3") == "Eggs, Toast, Coffee(2)"
 
 def test_breakfast_toomany_excep():
     with pytest.raises(TooManyItemsException) as e_info:
