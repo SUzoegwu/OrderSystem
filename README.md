@@ -92,6 +92,10 @@ Enter a key of `meal` with the meal you are interest in as the value
 
 Enter a key or `order` with the order that you are interested in as a value
 
+Example below:
+
+![](images/postman_example.png)
+
 ### Locally with Docker
 Ensure Postman is installed. Postman can be installed by navigating to the following link `https://www.postman.com/downloads/`
 
