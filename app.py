@@ -1,4 +1,4 @@
-from order_system.order_system import OrderSystem
+from ordersystem.order_system import OrderSystem
 
 from dotenv import load_dotenv
 from flask import Flask, request, Response

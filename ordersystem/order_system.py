@@ -1,6 +1,6 @@
-from order_system.meals import Breakfast, Lunch, Dinner
+from ordersystem.meals import Breakfast, Lunch, Dinner
 import logging, os, json
-from order_system.custom_exceptions import OrderIncompleteException
+from ordersystem.custom_exceptions import OrderIncompleteException
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p', level=LOG_LEVEL)

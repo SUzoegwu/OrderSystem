@@ -1,5 +1,5 @@
-from order_system.menu import Menu
-from order_system.custom_exceptions import TooManyItemsException, OrderIncompleteException
+from ordersystem.menu import Menu
+from ordersystem.custom_exceptions import TooManyItemsException, OrderIncompleteException
 import os, json, logging
 
 class Breakfast(Menu):

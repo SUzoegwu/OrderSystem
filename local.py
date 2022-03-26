@@ -1,5 +1,5 @@
-from order_system.order_system import OrderSystem
-from order_system.custom_exceptions import OrderIncompleteException, UnknownItemException, TooManyItemsException
+from ordersystem.order_system import OrderSystem
+from ordersystem.custom_exceptions import OrderIncompleteException, UnknownItemException, TooManyItemsException
 import sys
 
 order_system = OrderSystem()

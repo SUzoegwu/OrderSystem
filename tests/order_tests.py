@@ -1,7 +1,7 @@
 import sys
 sys.path.append("../")
-from order_system.order_system import OrderSystem
-from order_system.custom_exceptions import OrderIncompleteException, TooManyItemsException
+from ordersystem.order_system import OrderSystem
+from ordersystem.custom_exceptions import OrderIncompleteException, TooManyItemsException
 import pytest
 
 order = OrderSystem()

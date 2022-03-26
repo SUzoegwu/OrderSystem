@@ -1,7 +1,7 @@
 import abc, os, json, logging
 from collections import Counter
 
-from order_system.custom_exceptions import UnknownItemException
+from ordersystem.custom_exceptions import UnknownItemException
 
 class Menu:
     def __init__(self, meal):
