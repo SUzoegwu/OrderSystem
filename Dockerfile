@@ -21,7 +21,13 @@ ENV MENU="{\"breakfast\":{\"1\":\"Eggs\",\"2\":\"Toast\",\"3\":\"Coffee\"},\"lun
 
 ENV COMPLIMENTARY="{\"breakfast\":{\"main\":\"\", \"side\":\"\", \"drink\":\"\"},\"lunch\":{\"main\":\"\", \"side\":\"\", \"drink\":\"\"},\"dinner\":{\"main\":\"\", \"side\":\"\", \"drink\":\"Water\", \"dessert\":\"\"}}"
 
+ENV SINGLE_ITEM="{\"breakfast\":[\"1\",\"2\"],\"lunch\":[\"1\", \"3\"],\"dinner\":[\"1\", \"2\", \"3\"]}"
+
+ENV MEAL_CATEGORY_MAPPING="{\"main\":\"1\", \"side\":\"2\", \"drink\":\"3\", \"dessert\":\"4\"}"
+
 ENV FLASK_ENV=development
+
+ENV LOG_LEVEL="INFO"
 
 RUN pytest ./tests/order_tests.py
 
