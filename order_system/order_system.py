@@ -1,5 +1,5 @@
 from order_system.meals import Breakfast, Lunch, Dinner
-import logging, os
+import logging, os, json
 from order_system.custom_exceptions import OrderIncompleteException
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -8,20 +8,24 @@ logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', datefmt=
 class OrderSystem:
     def __init__(self):
         self.menu_mapping = {
-            "breakfast" : Breakfast("breakfast"),
-            "lunch" : Lunch("lunch"),
-            "dinner" : Dinner("dinner")
+            "breakfast": Breakfast(),
+            "lunch" : Lunch(),
+            "dinner" : Dinner()
         }
 
     def get_order(self, menu_type, order):
         order = order.replace(" ", "")
         order_list = order.split(",")
         logging.debug(f"Received order: {menu_type} List of items: {order_list}")
+        meal_category = json.loads(os.getenv("MEAL_CATEGORY_MAPPING"))
+        main = meal_category["main"]
+        side = meal_category["side"]
         logging.info("Validating food")
-        self.validate(order_list)
+        self.validate(order_list, main, side)
         logging.info("Done Validating")
+        drink = meal_category["drink"]
 
-        if "3" not in order_list:
+        if drink not in order_list:
             logging.info("Drink is not included. Adding water...")
             order_list.append("Water")
         
@@ -31,14 +35,14 @@ class OrderSystem:
         logging.info(f"Getting the food for {menu}")
         return menu.get_food(order_list)
 
-    def validate(self, order_list):
+    def validate(self, order_list, main, side):
         logging.info(f"Validating {order_list}")
-        if "1" not in order_list and "2" not in order_list:
-            raise OrderIncompleteException("Main and Side")
-        elif "1" not in order_list:
-            raise OrderIncompleteException("Main")
-        elif "2" not in order_list:
-            raise OrderIncompleteException("Side")
+        logging.debug(f"Main Category is {main}. Side Category is {side}")
         
-        logging.info("Done validating")
+        if main not in order_list and side not in order_list:
+            raise OrderIncompleteException("Main and Side")
+        if main not in order_list:
+            raise OrderIncompleteException("Main")
+        if side not in order_list:
+            raise OrderIncompleteException("Side")
         return
