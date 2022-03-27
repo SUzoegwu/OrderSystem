@@ -1,6 +1,6 @@
-from order_system.menu import Menu
-from order_system.custom_exceptions import TooManyItemsException, OrderIncompleteException
-import os, json, logging
+from ordersystem.menu import Menu
+from ordersystem.custom_exceptions import TooManyItemsException, OrderIncompleteException
+import logging
 
 class Breakfast(Menu):
     def __init__(self):
@@ -8,6 +8,7 @@ class Breakfast(Menu):
 
     def get_food(self, order_list):
         self.meal_menu, self.complimentary_items = Menu.get_menu(self.meal)
+        self.course_category = Menu.get_course_category()
         logging.info("Validating Breakfast Order...")
         logging.debug(f"Validating Breakfast Order {order_list}")
         self.validate(order_list)
@@ -15,8 +16,13 @@ class Breakfast(Menu):
         return self.aggregate(order_list)
     
     def validate(self, order_list):
+        invalid_order = self.mandatory_item_validation(order_list)
+        logging.debug(f"Invalid Order: {invalid_order}")
+        if invalid_order:
+            raise OrderIncompleteException(invalid_order)
         too_many_message = self.too_many_validation(order_list)
-        if too_many_message is not None:
+        logging.debug(f"Too many items Order: {too_many_message}")
+        if too_many_message:
             raise TooManyItemsException(too_many_message)
         return
 
@@ -27,6 +33,7 @@ class Lunch(Menu):
 
     def get_food(self, order_list):
         self.meal_menu, self.complimentary_items = Menu.get_menu(self.meal)
+        self.course_category = Menu.get_course_category()
         logging.info("Validating Lunch Order...")
         logging.debug(f"Validating Lunch Order {order_list}")
         self.validate(order_list)
@@ -34,8 +41,13 @@ class Lunch(Menu):
         return self.aggregate(order_list)
 
     def validate(self, order_list):
+        invalid_order = self.mandatory_item_validation(order_list)
+        logging.debug(f"Invalid Order: {invalid_order}")
+        if invalid_order:
+            raise OrderIncompleteException(invalid_order)
         too_many_message = self.too_many_validation(order_list)
-        if too_many_message is not None:
+        logging.debug(f"Too many items Order: {too_many_message}")
+        if too_many_message:
             raise TooManyItemsException(too_many_message)
         return
 
@@ -45,6 +57,7 @@ class Dinner(Menu):
 
     def get_food(self, order_list):
         self.meal_menu, self.complimentary_items = Menu.get_menu(self.meal)
+        self.course_category = Menu.get_course_category()
         logging.info("Validating Dinner Order...")
         logging.debug(f"Validating Dinner Order {order_list}")
         self.validate(order_list)
@@ -52,12 +65,12 @@ class Dinner(Menu):
         return self.aggregate(order_list)
 
     def validate(self, order_list):
-        meal_category = json.loads(os.getenv("MEAL_CATEGORY_MAPPING"))
-        dessert = meal_category["dessert"]
-        if dessert not in order_list:
-            raise OrderIncompleteException("Dessert")
+        invalid_order = self.mandatory_item_validation(order_list)
+        logging.debug(f"Invalid Order: {invalid_order}")
+        if invalid_order:
+            raise OrderIncompleteException(invalid_order)
         too_many_message = self.too_many_validation(order_list)
-        if too_many_message is not None:
+        logging.debug(f"Too many items Order: {too_many_message}")
+        if too_many_message:
             raise TooManyItemsException(too_many_message)
-        
         return
