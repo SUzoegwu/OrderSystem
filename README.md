@@ -4,7 +4,8 @@ This project is an OrderSystem that takes an an order and returns the correct or
 ## Installation with PyPI
 pip install ordersystem
 
-Installing project with pypi will not include flask REST API and Docker. To retrieve the Dockerfile and flask application. Clone this [repository](https://github.com/SUzoegwu/OrderSystem) and follow the rest of this Readme in the Git clone section.
+## Extras
+Clone and follow the ReadMe in this [repository](https://github.com/SUzoegwu/OrderSystemServer) to see the Flask and Docker version of this application.
 
 ## Usage
 Ensure these environment variables are set:
