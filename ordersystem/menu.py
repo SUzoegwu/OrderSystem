@@ -8,6 +8,7 @@ class Menu:
         self.meal_menu = None
         self.complimentary_items = None
         self.meal = None
+        self.course_category = None
     
     @staticmethod
     def get_menu(meal):
@@ -18,6 +19,32 @@ class Menu:
         complimentary_items = json.loads(os.getenv("COMPLIMENTARY"))
         logging.debug(f"Retrieved complimentary menu from environment for {meal} /n /t {complimentary_items}")
         return menu[meal], complimentary_items[meal]
+    
+    @staticmethod
+    def get_course_category():
+        logging.debug(f"Retrieving Course Category from environment")
+        course_category = json.loads(os.getenv("COURSE_CATEGORY_MAPPING"))
+        logging.debug(f"Retrieved course category from environment")
+        return course_category
+
+    
+    def mandatory_item_validation(self, order_list):
+        logging.info("Getting mandatory course list...")
+        mandatory_course_list = json.loads(os.getenv("MANDATORY_COURSE"))[self.meal]
+        logging.info(f"These courses must be ordered: {mandatory_course_list}")
+        invalid_order = None
+
+        logging.info("Checking order...")
+        for course in mandatory_course_list:
+            if self.course_category[course] not in order_list:
+                if invalid_order is None:
+                    invalid_order = f"{course.capitalize()}"
+                else:
+                    invalid_order += f" and {course.capitalize()}"
+        logging.info(f"These courses were not ordered: {invalid_order}.")
+        
+        return invalid_order
+
     
     def too_many_validation(self, order_list):
         message = None
@@ -43,50 +70,35 @@ class Menu:
         food_amount_list = [(item, amount) for item, amount in counter_list.items()]
         logging.debug(f"Food item and the number of times ordered tuple: \n \t {food_amount_list}")
 
-        logging.info("Retrieving the meal category from environment variables")
-        meal_category = json.loads(os.getenv("MEAL_CATEGORY_MAPPING"))
-        logging.debug(f"Meal category mapping:{meal_category}")
+        logging.debug(f"Course category mapping:{self.course_category}")
 
-        main = self.complimentary_items.get("main", "")
-        side = self.complimentary_items.get("side", "")
-        drink = self.complimentary_items.get("drink", "")
-        dessert = self.complimentary_items.get("dessert", "")
+        return_order_category = {}
+        logging.info("Retrieving complimentary items for this meal...")
+        for course in self.course_category.keys():
+            return_order_category[course] = self.complimentary_items.get(course, "")
 
-        logging.debug(f"Complimentary items for the meal {self.meal} \n \t Main: {main} \n \t Side: {side} \n \t Drink: {drink} \n \t Dessert {dessert}")
-
-        for k, v in food_amount_list:
-            if k in self.meal_menu:
-                logging.debug(f"Food Category: {k} Amount: {v}")
-                if "main" in meal_category and k == meal_category["main"]:
-                    main += aggregator((k,v)) if main == "" else main + ", " +  aggregator((k,v))
-                elif "side" in meal_category and k == meal_category["side"]:
-                    side += aggregator((k,v)) if side == "" else side + ", " +  aggregator((k,v))
-                elif "drink" in meal_category and k == meal_category["drink"]:
-                    drink = aggregator((k,v)) if drink == "" else drink + ", " +  aggregator((k,v))
-                elif "dessert" in meal_category and k == meal_category["dessert"]:
-                    dessert = aggregator((k,v)) if dessert == "" else dessert + ", " +  aggregator((k,v))
-                else:
-                    logging.info("Unknown Item")
-                    raise UnknownItemException(k)
-            elif k == "Water":
-                if self.meal.lower() != "dinner":
-                    drink += k
+        logging.debug(f"Complimentary items for the meal {self.meal} \n \t {return_order_category}")
+        logging.info(f"Complimentary items for the meal {self.meal} \n \t {return_order_category}")
+        for item_num, amount in food_amount_list:
+            if item_num in self.meal_menu:
+                for course in return_order_category.keys():
+                    if self.course_category[course] == item_num:
+                        return_order_category[course] = aggregator((item_num,amount)) if return_order_category[course] == "" else return_order_category[course] + ", " +  aggregator((item_num,amount))
+            elif item_num == "Water":
+                return_order_category["drink"] = item_num
             else:
                 logging.info("Unknown Item")
-                raise UnknownItemException(k)
+                raise UnknownItemException(item_num)
+        logging.info(f"Order for the meal {self.meal} \n \t {return_order_category}")
         
         logging.info("Formatting order")
         order = ""
-        for i in [main, side, drink, dessert]:
-            if i:
-                order = order + i + " "
-        order = order.strip().replace(" ", ", ")
-        # if self.meal == "dinner":
-        #     order = f"{main}, {side}, {drink}, {dessert}"
-        #     logging.debug(f"Order: {order}")
-        # else:
-        #     order = f"{main}, {side}, {drink}"
-        #     logging.debug(f"Order: {order}")
+        logging.info(return_order_category)
+        for course in return_order_category.keys():
+            if return_order_category[course]:
+                logging.info(return_order_category[course])
+                order = order + return_order_category[course] + ", "
+        order = order.strip(", ")
         return order
 
     @abc.abstractmethod
