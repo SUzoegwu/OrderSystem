@@ -50,33 +50,43 @@ class Menu:
         main = self.complimentary_items.get("main", "")
         side = self.complimentary_items.get("side", "")
         drink = self.complimentary_items.get("drink", "")
-        dessert = self.complimentary_items.get("dessert", None)
+        dessert = self.complimentary_items.get("dessert", "")
 
         logging.debug(f"Complimentary items for the meal {self.meal} \n \t Main: {main} \n \t Side: {side} \n \t Drink: {drink} \n \t Dessert {dessert}")
 
         for k, v in food_amount_list:
-            logging.debug(f"Food Category: {k} Amount: {v}")
-            if k == meal_category["main"]:
-                main += aggregator((k,v)) if main == "" else main + ", " +  aggregator((k,v))
-            elif k == meal_category["side"]:
-                side += aggregator((k,v)) if side == "" else side + ", " +  aggregator((k,v))
-            elif k == meal_category["drink"]:
-                drink = aggregator((k,v)) if drink == "" else drink + ", " +  aggregator((k,v))
-            elif k == meal_category["dessert"] and dessert is not None:
-                dessert = aggregator((k,v)) if dessert == "" else dessert + ", " +  aggregator((k,v))
+            if k in self.meal_menu:
+                logging.debug(f"Food Category: {k} Amount: {v}")
+                if "main" in meal_category and k == meal_category["main"]:
+                    main += aggregator((k,v)) if main == "" else main + ", " +  aggregator((k,v))
+                elif "side" in meal_category and k == meal_category["side"]:
+                    side += aggregator((k,v)) if side == "" else side + ", " +  aggregator((k,v))
+                elif "drink" in meal_category and k == meal_category["drink"]:
+                    drink = aggregator((k,v)) if drink == "" else drink + ", " +  aggregator((k,v))
+                elif "dessert" in meal_category and k == meal_category["dessert"]:
+                    dessert = aggregator((k,v)) if dessert == "" else dessert + ", " +  aggregator((k,v))
+                else:
+                    logging.info("Unknown Item")
+                    raise UnknownItemException(k)
             elif k == "Water":
                 if self.meal.lower() != "dinner":
                     drink += k
             else:
-                raise UnknownItemException(str(k))
+                logging.info("Unknown Item")
+                raise UnknownItemException(k)
         
         logging.info("Formatting order")
-        if self.meal == "dinner":
-            order = f"{main}, {side}, {drink}, {dessert}"
-            logging.debug(f"Order: {order}")
-        else:
-            order = f"{main}, {side}, {drink}"
-            logging.debug(f"Order: {order}")
+        order = ""
+        for i in [main, side, drink, dessert]:
+            if i:
+                order = order + i + " "
+        order = order.strip().replace(" ", ", ")
+        # if self.meal == "dinner":
+        #     order = f"{main}, {side}, {drink}, {dessert}"
+        #     logging.debug(f"Order: {order}")
+        # else:
+        #     order = f"{main}, {side}, {drink}"
+        #     logging.debug(f"Order: {order}")
         return order
 
     @abc.abstractmethod
